@@ -62,7 +62,7 @@ app.get('/care-groups', basicAuth(), function (req, res) {
 		});
 });
 
-const port = 8000;
+const port = process.env.PORT || 8000;
 app.listen(port, () => {
 	console.log(`IFGF Express API now listening on port ${port}`);
 });
