@@ -1,0 +1,9 @@
+{
+    "db": {
+        "port": 3306,
+        "database": "ifgfseattle_test"
+    },
+    "s3": {
+        "prefix": "https://s3-us-west-2.amazonaws.com/ifgfseattle/"
+    }
+}
