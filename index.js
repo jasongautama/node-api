@@ -41,7 +41,7 @@ app.get('/', basicAuth(), function (req, res) {
 });
 
 app.get('/sermons', basicAuth(), function (req, res) {
-	dbHandler.getSermons()
+	dbHandler.getSermonsTest()
 		.then(result => {
 			res.send(result);
 		})
@@ -52,7 +52,7 @@ app.get('/sermons', basicAuth(), function (req, res) {
 });
 
 app.get('/care-groups', basicAuth(), function (req, res) {
-	dbHandler.getCareGroups()
+	dbHandler.getCareGroupsTest()
 		.then(result => {
 			res.send(result);
 		})
