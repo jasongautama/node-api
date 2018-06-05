@@ -9,12 +9,15 @@ const dbHandler = require('./lib/db-handler');
 app.use(passport.initialize());
 
 passport.use(new Strategy(
+
+	/**
+	 * This is the Authentication logic.
+	 * When calling the cb(), note the following:
+	 * 1st Param: Error message
+	 * 2nd Param: User object or false to have users retry
+	 */
 	function (username, password, cb) {
 		// console.log("Auth attempt: " + username + " | " + password);
-
-		// 1st Param: Error message
-		// 2nd Param: User object or false to have users retry
-
 		// Admin auth
 		if (username == process.env.BASIC_USER && password == process.env.BASIC_PW) {
 			cb(null, { access: "admin" });
@@ -41,7 +44,7 @@ app.get('/', basicAuth(), function (req, res) {
 });
 
 app.get('/sermons', basicAuth(), function (req, res) {
-	dbHandler.getSermonsTest()
+	dbHandler.getSermons()
 		.then(result => {
 			res.send(result);
 		})
@@ -52,7 +55,7 @@ app.get('/sermons', basicAuth(), function (req, res) {
 });
 
 app.get('/care-groups', basicAuth(), function (req, res) {
-	dbHandler.getCareGroupsTest()
+	dbHandler.getCareGroups()
 		.then(result => {
 			res.send(result);
 		})
