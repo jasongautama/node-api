@@ -1,6 +1,6 @@
 const sequelize = require('./db-config');
 const models = require('./db-models');
-const config = require('../config.json');
+const config = require('../../config.json');
 
 const { Sermon, CareGroup } = models;
 

@@ -4,7 +4,7 @@ var Strategy = require('passport-http').BasicStrategy;
 const app = express();
 require('dotenv').config();
 // Import our own files
-const dbHandler = require('./lib/db-handler');
+const dbHandler = require('./src/db/db-handler');
 
 app.use(passport.initialize());
 
@@ -52,7 +52,7 @@ const basicAuth = () => {
 };
 
 app.get('/', basicAuth(), function (req, res) {
-	res.send("Hey there! This is the IFGF Test API endpoint. Currently, our list of supported paths are: /sermons, /care-groups");
+	res.send("Hey there! This is the IFGF Seattle API endpoint. Currently, our list of supported paths are: /sermons, /care-groups");
 });
 
 app.get('/sermons', basicAuth(), function (req, res) {
@@ -79,5 +79,5 @@ app.get('/care-groups', basicAuth(), function (req, res) {
 
 const port = process.env.PORT || 8000;
 app.listen(port, () => {
-	console.log(`IFGF Express API now listening on port ${port}`);
+	console.log(`IFGF Seattle API now listening on port ${port}`);
 });
