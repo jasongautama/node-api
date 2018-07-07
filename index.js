@@ -1,11 +1,15 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const passport = require('passport');
 var Strategy = require('passport-http').BasicStrategy;
 const app = express();
 require('dotenv').config();
 // Import our own files
-const dbHandler = require('./src/db/db-handler');
+const config = require('./config.json');
+const DbHandler = require('./src/db/db-handler');
+const apiVersion = config.apiVersion;
 
+app.use(bodyParser.json());
 app.use(passport.initialize());
 
 app.use(function(req, res, next) {
@@ -51,29 +55,19 @@ const basicAuth = () => {
 	return passport.authenticate('basic', { session: false })
 };
 
-app.get('/', basicAuth(), function (req, res) {
+app.get(`/${apiVersion}`, basicAuth(), function (req, res) {
 	res.send("Hey there! This is the IFGF Seattle API endpoint. Currently, our list of supported paths are: /sermons, /care-groups");
 });
 
-app.get('/sermons', basicAuth(), function (req, res) {
-	dbHandler.getSermons()
+app.all(`/${apiVersion}/*`, basicAuth(), function (req, res) {
+	dbHandler = new DbHandler(req);
+	dbHandler.routeRequest()
 		.then(result => {
 			res.send(result);
 		})
 		.catch(err => {
-			console.log(err);
-			res.status(500).send(err);
-		});
-});
-
-app.get('/care-groups', basicAuth(), function (req, res) {
-	dbHandler.getCareGroups()
-		.then(result => {
-			res.send(result);
-		})
-		.catch(err => {
-			console.log(err);
-			res.status(500).send(err);
+			// console.log(err);
+			res.status(err.code).send(err.message);
 		});
 });
 
