@@ -1,6 +1,7 @@
 const Sequelize = require('sequelize');
 const sequelize = require('../db-config');
 const DbModel = require('./db-model');
+const config = require('../../../config.json');
 
 class CareGroup extends DbModel {
 
@@ -16,6 +17,17 @@ class CareGroup extends DbModel {
         }, { tableName: 'CareGroup' });
 
         super(tableModel);
+    }
+
+    /**
+     * @param {Object} rows
+     * @override 
+     */
+    processRows(rows) {
+        for (const i in rows) {
+            rows[i].MainPhotoPath = config.s3.prefix + rows[i].MainPhotoPath;
+        }
+        return Promise.resolve(rows);
     }
 }
 

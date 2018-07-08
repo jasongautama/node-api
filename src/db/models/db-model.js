@@ -38,6 +38,9 @@ class DbModel {
                     return this.model.findAll(filter);
                 })
                 .then(rows => {
+                    return this.processRows(rows);
+                })
+                .then(rows => {
                     return resolve(rows);
                 })
                 .catch(err => {
@@ -105,6 +108,14 @@ class DbModel {
                     reject('Unable to update model data: ', err);
                 });
         });
+    }
+
+    /**
+     * Process rows after a get()
+     * @param {Object} rows 
+     */
+    processRows(rows) {
+        return Promise.resolve(rows);
     }
 
     /**
