@@ -113,6 +113,7 @@ class DbModel {
     /**
      * Process rows after a get()
      * @param {Object} rows 
+     * @return {Promise}
      */
     processRows(rows) {
         return Promise.resolve(rows);
@@ -121,9 +122,10 @@ class DbModel {
     /**
      * Validate arguments before Update/Create ops
      * @param {Object} args 
+     * @return {Promise}
      */
     validateArgs(args) {
-        return Promise.resolve(args);
+        return Promise.resolve();
     }
 
 };
