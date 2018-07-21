@@ -10,7 +10,7 @@ const Models = {
     'CareGroups': 'care-groups',
     'Sermons': 'sermons',
     'SermonSeries': 'sermon-series',
-    'Post': 'post'
+    'Posts': 'posts'
 };
 
 const ErrorCodes = {
@@ -80,7 +80,7 @@ class DbHandler {
                     model = new SermonSeries();
                     break;
                 
-                case Models.Post:
+                case Models.Posts:
                     model = new Post();
                     break;
                     
