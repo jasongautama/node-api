@@ -4,11 +4,13 @@ const DbModel = require('./models/db-model');
 const CareGroup = require('./models/care-group');
 const Sermon = require('./models/sermon');
 const SermonSeries = require('./models/sermon-series');
+const Post = require('./models/post');
 
 const Models = {
     'CareGroups': 'care-groups',
     'Sermons': 'sermons',
-    'SermonSeries': 'sermon-series'
+    'SermonSeries': 'sermon-series',
+    'Post': 'post'
 };
 
 const ErrorCodes = {
@@ -77,7 +79,11 @@ class DbHandler {
                 case Models.SermonSeries:
                     model = new SermonSeries();
                     break;
-
+                
+                case Models.Post:
+                    model = new Post();
+                    break;
+                    
                 default:
                     return reject({
                         code: ErrorCodes.INVALID,
