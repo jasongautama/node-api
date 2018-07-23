@@ -56,7 +56,7 @@ const basicAuth = () => {
 };
 
 app.get(`/${apiVersion}`, basicAuth(), function (req, res) {
-	res.send("Hey there! This is the IFGF Seattle API endpoint. Currently, our list of supported paths are: /sermons, /care-groups");
+	res.send("Hey there! This is the IFGF Seattle API endpoint. Currently, our list of supported paths are: /sermons, /care-groups, /posts, /sermon-series");
 });
 
 app.all(`/${apiVersion}/*`, basicAuth(), function (req, res) {
