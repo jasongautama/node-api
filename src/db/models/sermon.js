@@ -7,7 +7,7 @@ class Sermon extends DbModel {
     constructor() {
         // Define the table model
         const tableModel = sequelize.define('sermon', {
-            ID: { type: Sequelize.INTEGER, primaryKey: true },
+            id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true, field: 'ID' },
             SeriesID: Sequelize.INTEGER,
             Title: Sequelize.STRING(100),
             Speaker: Sequelize.STRING(100),
@@ -18,7 +18,7 @@ class Sermon extends DbModel {
         }, { tableName: 'Sermon' });
 
         const viewModel = sequelize.define('sermon-view', {
-            SermonID: { type: Sequelize.INTEGER, primaryKey: true },
+            id: { type: Sequelize.INTEGER, primaryKey: true, field: 'SermonID' },
             SeriesName: Sequelize.STRING(100),
             Year: Sequelize.INTEGER,
             Title: Sequelize.STRING(100),

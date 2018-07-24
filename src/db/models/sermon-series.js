@@ -9,7 +9,7 @@ class SermonSeries extends DbModel {
     constructor() {
         // Define the table model
         const tableModel = sequelize.define('sermon-series', {
-            ID: { type: Sequelize.INTEGER, primaryKey: true },
+            id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true, field: 'ID' },
             Name: Sequelize.STRING(100),
             Year: Sequelize.INTEGER(4),
             StartMonth: Sequelize.TINYINT(),

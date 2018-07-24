@@ -44,7 +44,7 @@ class DbModel {
                     return resolve(rows);
                 })
                 .catch(err => {
-                    reject('Unable to retrieve model data: ' + err);
+                    return reject('Unable to retrieve model data: ' + err);
                 });
         });
     }
@@ -63,7 +63,7 @@ class DbModel {
                     return resolve(res);
                 })
                 .catch(err => {
-                    reject('Unable to create model: ', err);
+                    return reject('Unable to create model: ', err);
                 });
         });
     }

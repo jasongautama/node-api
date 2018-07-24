@@ -16,9 +16,10 @@ app.use(function(req, res, next) {
 	res.header('Access-Control-Allow-Credentials', true);
 	res.header('Access-Control-Allow-Origin', "*");
 	res.header('Access-Control-Allow-Methods', "GET,OPTIONS");
-	res.header('Access-Control-Allow-Headers', "Authorization, Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
+	res.header('Access-Control-Allow-Headers', "Authorization, Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, Content-Type, Content-Range, Access-Control-Request-Method Access-Control-Request-Headers, X-Total-Count");
+	res.header('Access-Control-Expose-Headers', "Content-Range, X-Total-Count");
 	if ('OPTIONS' == req.method) {
-		 res.send(200);
+		 res.sendStatus(200);
 	 } else {
 		 next();
 	 }
@@ -61,7 +62,7 @@ app.get(`/${apiVersion}`, basicAuth(), function (req, res) {
 
 app.all(`/${apiVersion}/*`, basicAuth(), function (req, res) {
 	dbHandler = new DbHandler(req);
-	dbHandler.routeRequest()
+	dbHandler.routeRequest(res)
 		.then(result => {
 			res.send(result);
 		})

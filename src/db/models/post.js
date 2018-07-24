@@ -7,7 +7,7 @@ class Post extends DbModel {
     constructor() {
 
         const tableModel = sequelize.define('post', {
-            ID: { type: Sequelize.INTEGER, primaryKey: true },
+            id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true, field: 'ID' },
             Type: Sequelize.INTEGER,
             Title: Sequelize.STRING(255),
             Content: Sequelize.TEXT,
@@ -17,7 +17,7 @@ class Post extends DbModel {
             
         }, { tableName: 'Post' });
 
-        super (tableModel);
+        super(tableModel);
     }
 }
 

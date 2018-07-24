@@ -8,7 +8,7 @@ class CareGroup extends DbModel {
     constructor() {
         // Define the table model
         const tableModel = sequelize.define('care-group', {
-            ID: { type: Sequelize.INTEGER, primaryKey: true },
+            id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true, field: 'ID' },
             Name: Sequelize.STRING(255),
             ShortName: Sequelize.STRING(100),
             Description: Sequelize.TEXT,

@@ -61,8 +61,9 @@ class DbHandler {
 
     /**
      * Routes DB requests to its appropriate function based on the path and method we received
+     * @param {IncomingResponse} expressResponse - The Express Response object
      */
-    routeRequest() {
+    routeRequest(expressResponse) {
         return new Promise((resolve, reject) => {
             let model = null;
     
@@ -94,6 +95,14 @@ class DbHandler {
             // Once we have the model, execute any requested operations
             return this.execute(model)
                 .then(res => {
+                    if (this.method === 'GET') {
+                        const ct = Array.isArray(res) ? res.length : 1;
+                        expressResponse.set({
+                            'X-Total-Count': ct,
+                            'Content-Range': `${this.module} 1-${ct}/${ct}`,
+                            'Content-Type': 'application/json'
+                        });
+                    }
                     resolve(res);
                 })
                 .catch(err => {
