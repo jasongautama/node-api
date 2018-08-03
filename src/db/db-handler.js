@@ -57,8 +57,7 @@ class DbHandler {
          * @type {string|null}
          */
         this.entityKey = urlParts.submodule;
-        console.log(`entityKey = ${this.entityKey}`); //added to check if entity is split
-    }
+       }
 
     /**
      * Routes DB requests to its appropriate function based on the path and method we received
