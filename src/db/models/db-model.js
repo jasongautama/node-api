@@ -26,26 +26,28 @@ class DbModel {
 
     /**
      * Retrives data with the filters passed in
-     * @param {Object} filter - object to define WHERE conditions
+     * @param {string|int} entityKey - The ID of the model
+     * @oaram {{}} filters - Object containing various parameter filters
      */
-    get(filter) {
+    get(entityKey, filters = {}) {
         return new Promise((resolve, reject) => {
             sequelize.authenticate()
                 .then(() => {
+                    // Default to regular model
+                    let model = this.model;
                     if (this.viewModel !== null) {
-                        return this.viewModel.findAll(filter);
+                        model = this.viewModel;
                     }
-                    // check if post 'ID' is specified for query;
-                    // null: 'ID' not specified
-                    if (filter == null) {
-                        return this.model.findAll(filter);
+                    // check if post 'ID' is specified for query; Can be null or undefined.
+                    if (!entityKey) {
+                        return model.findAll(filters);
                     }
-                    else {
-                        return this.model.findById(filter);
-                    }
+                    return model.findById(entityKey);
+                    
                 })
-                .then(rows => {
-                    return this.processRows(rows);
+                // NOTE: result is Array for findAll() and object for findById
+                .then(result => {
+                    return this.processRows(result);
                 })
                 .then(rows => {
                     return resolve(rows);
@@ -119,6 +121,7 @@ class DbModel {
 
     /**
      * Process rows after a get()
+     * @TODO: rows can be singular object or an array of objects.. Maybe define a class for Results?
      * @param {Object} rows 
      * @return {Promise}
      */

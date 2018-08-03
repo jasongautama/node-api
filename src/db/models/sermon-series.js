@@ -23,19 +23,29 @@ class SermonSeries extends DbModel {
     }
 
      /**
-     * @param {Object} rows
+     * @param {Object} result
      * @override 
      */
-    processRows(rows) {
-        for (const i in rows) {
+    processRows(result) {
+        // For singular results, just modify parameter
+        if (typeof result === 'object') {
             // Add prefix to image paths
-            rows[i].ImagePath = rows[i].ImagePath ? config.s3.prefix + rows[i].ImagePath : '';
-            rows[i].BannerImagePath = rows[i].BannerImagePath ? config.s3.prefix + rows[i].BannerImagePath : '';
+            result.ImagePath = result.ImagePath ? config.s3.prefix + result.ImagePath : '';
+            result.BannerImagePath = result.BannerImagePath ? config.s3.prefix + result.BannerImagePath : '';
             // Add a Month/Year string for nicer display
-            var date = moment(`${rows[i].Year}-${rows[i].StartMonth}-01`);
-            rows[i].StartMonthYear = date.format('MMMM YYYY'); 
+            var date = moment(`${result.Year}-${result.StartMonth}-01`);
+            result.StartMonthYear = date.format('MMMM YYYY'); 
+            return Promise.resolve(result);
         }
-        return Promise.resolve(rows);
+        for (const i in result) {
+            // Add prefix to image paths
+            result[i].ImagePath = result[i].ImagePath ? config.s3.prefix + result[i].ImagePath : '';
+            result[i].BannerImagePath = result[i].BannerImagePath ? config.s3.prefix + result[i].BannerImagePath : '';
+            // Add a Month/Year string for nicer display
+            var date = moment(`${result[i].Year}-${result[i].StartMonth}-01`);
+            result[i].StartMonthYear = date.format('MMMM YYYY'); 
+        }
+        return Promise.resolve(result);
     }
 }
 

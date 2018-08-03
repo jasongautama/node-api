@@ -20,14 +20,20 @@ class CareGroup extends DbModel {
     }
 
     /**
-     * @param {Object} rows
+     * @param {Object|array} result
      * @override 
      */
-    processRows(rows) {
-        for (const i in rows) {
-            rows[i].MainPhotoPath = config.s3.prefix + rows[i].MainPhotoPath;
+    processRows(result) {
+        // For singular results, just modify parameter
+        if (typeof result === 'object') {
+            result.MainPhotoPath = config.s3.prefix + result.MainPhotoPath;
+            return Promise.resolve(result);
         }
-        return Promise.resolve(rows);
+        // If there is multiple rows, loop and modify
+        for (const i in result) {
+            result[i].MainPhotoPath = config.s3.prefix + result[i].MainPhotoPath;
+        }
+        return Promise.resolve(result);
     }
 }
 
