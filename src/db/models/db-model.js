@@ -35,7 +35,14 @@ class DbModel {
                     if (this.viewModel !== null) {
                         return this.viewModel.findAll(filter);
                     }
-                    return this.model.findAll(filter);
+                    // check if post 'ID' is specified for query;
+                    // null: 'ID' not specified
+                    if (filter == null) {
+                        return this.model.findAll(filter);
+                    }
+                    else {
+                        return this.model.findById(filter);
+                    }
                 })
                 .then(rows => {
                     return this.processRows(rows);

@@ -57,6 +57,7 @@ class DbHandler {
          * @type {string|null}
          */
         this.entityKey = urlParts.submodule;
+        console.log(`entityKey = ${this.entityKey}`); //added to check if entity is split
     }
 
     /**
@@ -122,7 +123,7 @@ class DbHandler {
     execute(model) {
         // Handle GET requests
         if (this.method === 'GET') {
-            return model.get();
+            return model.get(this.entityKey);
         }
         // Handle PUT/Update requests
         else if (this.method === 'PUT') {
