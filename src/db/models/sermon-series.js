@@ -32,7 +32,8 @@ class SermonSeries extends DbModel {
             result[i].ImagePath = result[i].ImagePath ? config.s3.prefix + result[i].ImagePath : '';
             result[i].BannerImagePath = result[i].BannerImagePath ? config.s3.prefix + result[i].BannerImagePath : '';
             // Add a Month/Year string for nicer display
-            var date = moment(`${result[i].Year}-${result[i].StartMonth}-01`);
+            const startMonth = result[i].StartMonth < 10 ? '0' + result[i].StartMonth : result[i].StartMonth;
+            var date = moment(`${result[i].Year}-${startMonth}-01`);
             result[i].StartMonthYear = date.format('MMMM YYYY'); 
         }
         return Promise.resolve(result);
