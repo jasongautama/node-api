@@ -122,7 +122,6 @@ class DbModel {
 
     /**
      * Process rows after a get()
-     * @TODO: rows can be singular object or an array of objects.. Maybe define a class for Results?
      * @param {Object} rows 
      * @return {Promise}
      */
