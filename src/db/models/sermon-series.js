@@ -27,16 +27,6 @@ class SermonSeries extends DbModel {
      * @override 
      */
     processRows(result) {
-        // For singular results, just modify parameter
-        if (typeof result === 'object') {
-            // Add prefix to image paths
-            result.ImagePath = result.ImagePath ? config.s3.prefix + result.ImagePath : '';
-            result.BannerImagePath = result.BannerImagePath ? config.s3.prefix + result.BannerImagePath : '';
-            // Add a Month/Year string for nicer display
-            var date = moment(`${result.Year}-${result.StartMonth}-01`);
-            result.StartMonthYear = date.format('MMMM YYYY'); 
-            return Promise.resolve(result);
-        }
         for (const i in result) {
             // Add prefix to image paths
             result[i].ImagePath = result[i].ImagePath ? config.s3.prefix + result[i].ImagePath : '';

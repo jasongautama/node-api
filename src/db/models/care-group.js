@@ -24,12 +24,6 @@ class CareGroup extends DbModel {
      * @override 
      */
     processRows(result) {
-        // For singular results, just modify parameter
-        if (typeof result === 'object') {
-            result.MainPhotoPath = config.s3.prefix + result.MainPhotoPath;
-            return Promise.resolve(result);
-        }
-        // If there is multiple rows, loop and modify
         for (const i in result) {
             result[i].MainPhotoPath = config.s3.prefix + result[i].MainPhotoPath;
         }

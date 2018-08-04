@@ -38,19 +38,20 @@ class DbModel {
                     if (this.viewModel !== null) {
                         model = this.viewModel;
                     }
-                    // check if post 'ID' is specified for query; Can be null or undefined.
-                    if (!entityKey) {
-                        return model.findAll(filters);
+                    // Check if entity 'ID' is specified for query.
+                    if (entityKey) {
+                        filters.id = entityKey;
                     }
-                    return model.findById(entityKey);
-                    
+                    return model.findAll({
+                        where: filters
+                    });
                 })
-                // NOTE: result is Array for findAll() and object for findById
                 .then(result => {
                     return this.processRows(result);
                 })
                 .then(rows => {
-                    return resolve(rows);
+                    const result = entityKey ? rows[0] : rows;
+                    return resolve(result);
                 })
                 .catch(err => {
                     return reject('Unable to retrieve model data: ' + err);
