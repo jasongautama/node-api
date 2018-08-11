@@ -110,7 +110,7 @@ class DbModel {
                     return entity.update(args);
                 })
                 .then(res => {
-                    console.log('Model updated to: ', this.model);
+                    console.log('Model update successful.');
                     return resolve(res);
                 })
                 .catch(err => {

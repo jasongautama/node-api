@@ -16,7 +16,10 @@ class SermonSeries extends DbModel {
             ImagePath: Sequelize.STRING(255),
             BannerImagePath: Sequelize.STRING(255),
             // Custom Columns
-            StartMonthYear: Sequelize.VIRTUAL
+            ImageFullPath: Sequelize.VIRTUAL,
+            BannerImageFullPath: Sequelize.VIRTUAL,
+            StartMonthYear: Sequelize.VIRTUAL,
+            NameWithMonthYear: Sequelize.VIRTUAL,
         }, { tableName: 'SermonSeries' });
 
         super(tableModel);
@@ -29,12 +32,13 @@ class SermonSeries extends DbModel {
     processRows(result) {
         for (const i in result) {
             // Add prefix to image paths
-            result[i].ImagePath = result[i].ImagePath ? config.s3.prefix + result[i].ImagePath : '';
-            result[i].BannerImagePath = result[i].BannerImagePath ? config.s3.prefix + result[i].BannerImagePath : '';
+            result[i].ImageFullPath = result[i].ImagePath ? config.s3.prefix + result[i].ImagePath : null;
+            result[i].BannerImageFullPath = result[i].BannerImagePath ? config.s3.prefix + result[i].BannerImagePath : null;
             // Add a Month/Year string for nicer display
             const startMonth = result[i].StartMonth < 10 ? '0' + result[i].StartMonth : result[i].StartMonth;
             var date = moment(`${result[i].Year}-${startMonth}-01`);
-            result[i].StartMonthYear = date.format('MMMM YYYY'); 
+            result[i].StartMonthYear = date.format('MMMM YYYY');
+            result[i].NameWithMonthYear = result[i].Name + ` (${result[i].StartMonthYear})`;
         }
         return Promise.resolve(result);
     }

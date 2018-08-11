@@ -13,7 +13,9 @@ class CareGroup extends DbModel {
             ShortName: Sequelize.STRING(100),
             Description: Sequelize.TEXT,
             MainPhotoPath: Sequelize.TEXT,
-            IsActive: Sequelize.BOOLEAN
+            IsActive: Sequelize.BOOLEAN,
+            // Custom
+            MainPhotoFullPath: Sequelize.VIRTUAL,
         }, { tableName: 'CareGroup' });
 
         super(tableModel);
@@ -25,7 +27,7 @@ class CareGroup extends DbModel {
      */
     processRows(result) {
         for (const i in result) {
-            result[i].MainPhotoPath = config.s3.prefix + result[i].MainPhotoPath;
+            result[i].MainPhotoFullPath = config.s3.prefix + result[i].MainPhotoPath;
         }
         return Promise.resolve(result);
     }
