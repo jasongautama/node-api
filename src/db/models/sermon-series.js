@@ -19,7 +19,7 @@ class SermonSeries extends DbModel {
             ImageFullPath: Sequelize.VIRTUAL,
             BannerImageFullPath: Sequelize.VIRTUAL,
             StartMonthYear: Sequelize.VIRTUAL,
-            NameWithMonthYear: Sequelize.VIRTUAL,
+            NameWithMonthYear: Sequelize.VIRTUAL
         }, { tableName: 'SermonSeries' });
 
         super(tableModel);
