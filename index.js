@@ -7,6 +7,8 @@ require('dotenv').config();
 // Import our own files
 const config = require('./config.json');
 const DbHandler = require('./src/db/db-handler');
+const SES = require('./src/aws.ses');
+
 const apiVersion = config.apiVersion;
 
 app.use(bodyParser.json({limit: '50mb'}));
@@ -59,6 +61,19 @@ const basicAuth = () => {
 
 app.get(`/${apiVersion}`, basicAuth(), function (req, res) {
 	res.send("Hey there! This is the IFGF Seattle API endpoint. Currently, our list of supported paths are: /sermons, /care-groups, /posts, /sermon-series");
+});
+
+app.post(`/${apiVersion}/prayer-request`, basicAuth(), function (req, res) {
+	console.log(`${req.ip} > Prayer request POST`);
+	const ses = new SES();
+	ses.prayerRequest(req)
+		.then(result => {
+			res.status(200).send("e-mail sent");
+		})
+		.catch(err => {
+			// console.log(err);
+			res.status(err.code).send(err.message);
+		});
 });
 
 app.all(`/${apiVersion}/*`, basicAuth(), function (req, res) {
