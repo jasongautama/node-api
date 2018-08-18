@@ -5,6 +5,8 @@
         "database": "ifgfseattle_test"
     },
     "s3": {
+        "bucket": "ifgfseattle",
+        "region": "us-west-2",
         "prefix": "https://s3-us-west-2.amazonaws.com/ifgfseattle/"
     }
 }

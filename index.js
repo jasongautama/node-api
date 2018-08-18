@@ -9,7 +9,8 @@ const config = require('./config.json');
 const DbHandler = require('./src/db/db-handler');
 const apiVersion = config.apiVersion;
 
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 app.use(passport.initialize());
 
 app.use(function(req, res, next) {
