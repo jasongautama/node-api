@@ -64,7 +64,6 @@ app.get(`/${apiVersion}`, basicAuth(), function (req, res) {
 });
 
 app.post(`/${apiVersion}/prayer-request`, basicAuth(), function (req, res) {
-	console.log(`${req.ip} > Prayer request POST`);
 	const ses = new SES();
 	ses.prayerRequest(req)
 		.then(result => {
