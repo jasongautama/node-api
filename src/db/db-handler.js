@@ -128,7 +128,6 @@ class DbHandler {
         // Handle PUT/Update requests
         else if (this.method === 'PUT') {
             console.log(`PUT request with key: ${this.entityKey}`); // and body:`, this.body);
-            // @TODO: Handle files. Upload to S3, save Key only
             return model.update(this.entityKey, this.body);
         }
         // Handle POST/Create requests

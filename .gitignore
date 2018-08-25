@@ -5,3 +5,5 @@ package-lock.json
 
 # Security files
 .env
+# Temp
+.tmp

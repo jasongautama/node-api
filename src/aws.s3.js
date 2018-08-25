@@ -6,8 +6,15 @@ const modelFieldIndex = {
     'SermonSeries': {
         'ImageFile': 'images/sermon-series/',
         'BannerImageFile': 'images/sermon-series/'
+    },
+    'Sermon': {
+        'ThumbnailFile': 'images/sermons/',
+        'MediaFile': 'sermons/'
+    },
+    'Post': {
+        'ImageFile': 'images/posts/'
     }
-}
+};
 
 class S3Handler {
 
@@ -21,8 +28,8 @@ class S3Handler {
 
     /**
      * Used by CMS to save file into S3
-     * 1. Parse file obj (blob) and convert to buffer
-     * @return {string}
+     * Expect a DATA URL/STRING and convert that into a buffer
+     * @return {Promise<any>}
      */
     saveModelFile(model, field, data, acl = 'private') {
         const s3Path = this._getS3PathForField(model, field);

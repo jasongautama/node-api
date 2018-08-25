@@ -160,7 +160,7 @@ class DbModel {
                     ));
                 }
             }
-
+            // Execute the chain and resolve
             chain.then(() => {
                 return resolve(args);
             })

@@ -28,6 +28,7 @@ class Sermon extends DbModel {
             Title: Sequelize.STRING(100),
             Speaker: Sequelize.STRING(100),
             FileName: Sequelize.STRING(100),
+            ThumbnailPath: Sequelize.STRING(255),
             MediaPath: Sequelize.STRING(255),
             MediaFullPath: Sequelize.STRING(255),
             Type: Sequelize.INTEGER,
@@ -35,7 +36,8 @@ class Sermon extends DbModel {
             Date: Sequelize.TIME,
             // Custom Columns
             MediaUrl: Sequelize.VIRTUAL,
-            SeriesNameYear: Sequelize.VIRTUAL
+            SeriesNameYear: Sequelize.VIRTUAL,
+            ThumbnailFullPath: Sequelize.VIRTUAL
         }, { tableName: 'vwSermon' });
 
         super(tableModel, viewModel);
@@ -47,8 +49,9 @@ class Sermon extends DbModel {
      */
     processRows(result) {
         for (const i in result) {
-            result[i].MediaUrl = config.s3.prefix + result[i].MediaFullPath;
+            result[i].MediaUrl = result[i].MediaFullPath ? config.s3.prefix + result[i].MediaFullPath : null;
             result[i].SeriesNameYear = result[i].SeriesName + ` (${result[i].SeriesYear})`;
+            result[i].ThumbnailFullPath = result[i].ThumbnailPath ? config.s3.prefix + result[i].ThumbnailPath : null;
         }
         return Promise.resolve(result);
     }
