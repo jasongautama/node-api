@@ -10,8 +10,6 @@
         "prefix": "https://s3-us-west-2.amazonaws.com/ifgfseattle/"
     },
     "prayerRequest": {
-        "recipient": "ameisen94@gmail.com",
         "source": "techadmin@ifgfseattle.org"
-
     }
 }

@@ -1,5 +1,6 @@
 const AWS = require('aws-sdk');
 const config = require('../config.json');
+const SiteSetting = require('./db/models/site-settings');
 
 class SES {
 
@@ -25,15 +26,14 @@ class SES {
             }
         } 
         var emailSubject = "You have received a prayer request!";
-        var messageData = `Sender name: ${req.body.name} <br>Email: 
-        ${req.body.email}<br>Phone number: ${req.body.phone}<br>
+        var messageData = `Sender name: ${req.body.name || "Anonymous"} <br>Email: 
+        ${req.body.email || "NOT PROVIDED"}<br>Phone number: ${req.body.phone || "NOT PROVIDED"}<br>
         Prayer Request:<br>${req.body.prayerRequest}`;
 
         var params = {
             Destination: {
-                ToAddresses: [
-                    config.prayerRequest.recipient
-                ]
+                // Set below
+                ToAddresses: []
             },
             Message: {
                 Body: {
@@ -56,15 +56,34 @@ class SES {
         };
 
         return new Promise((resolve, reject) => {
-            this.ses.sendEmail(params, function (err, data) {
-                if (err) {
-                    return reject(err);
-                }
-                return resolve(data);
-            });
+            // Set destination e-mail
+            const settings = new SiteSetting();
+            
+            settings.getValue('PrayerRequestEmail')
+                .then(emailDestination => {
+                    // Set the e-mail destination
+                    params.Destination.ToAddresses.push(emailDestination);
+                    this.ses.sendEmail(params, function (err, data) {
+                        if (err) {
+                            console.log(`SES Error:`, err);
+                            return reject({
+                                code: 500, 
+                                message: 'A server error occured and we could not process your request.'
+                            });
+                        }
+                        return resolve();
+                    });
+                })
+                .catch(err => {
+                    console.log(`Prayer Request e-mail error: `, err);
+                    return reject({
+                        code: 500, 
+                        message: 'A server error occured and we could not process your request.'
+                    });
+                });
         });
     }
 
-}
+};
 
 module.exports = SES;

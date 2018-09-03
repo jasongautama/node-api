@@ -5,12 +5,14 @@ const CareGroup = require('./models/care-group');
 const Sermon = require('./models/sermon');
 const SermonSeries = require('./models/sermon-series');
 const Post = require('./models/post');
+const SiteSetting = require('./models/site-settings');
 
 const Models = {
     'CareGroups': 'care-groups',
     'Sermons': 'sermons',
     'SermonSeries': 'sermon-series',
-    'Posts': 'posts'
+    'Posts': 'posts',
+    'SiteSettings': 'site-settings'
 };
 
 const ErrorCodes = {
@@ -64,7 +66,6 @@ class DbHandler {
      * @param {IncomingResponse} expressResponse - The Express Response object
      */
     routeRequest(expressResponse) {
-        console.log(`DB request received: ${this.method} ${this.module}${this.entityKey ? ` > ${this.entityKey}` : ''}`)
         return new Promise((resolve, reject) => {
             let model = null;
     
@@ -84,6 +85,10 @@ class DbHandler {
                 
                 case Models.Posts:
                     model = new Post();
+                    break;
+                
+                case Models.SiteSettings:
+                    model = new SiteSetting();
                     break;
                     
                 default:
