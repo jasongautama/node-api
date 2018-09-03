@@ -3,6 +3,11 @@ const sequelize = require('../db-config');
 const DbModel = require('./db-model');
 const config = require('../../../config.json');
 
+/**
+ * @TODO: Handle "/sermons/{id}/SeriesName" to quickly get a list of sermons by its series
+ * @class Sermon
+ * @extends {DbModel}
+ */
 class Sermon extends DbModel {
 
     constructor() {

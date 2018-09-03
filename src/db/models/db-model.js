@@ -4,6 +4,7 @@ const S3Handler = require('../../aws.s3');
 
 /**
  * Base class for our Database Models
+ * @TODO: Handle pagination
  * @abstract
  */
 class DbModel {
