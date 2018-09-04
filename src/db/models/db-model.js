@@ -130,6 +130,7 @@ class DbModel {
 
     /**
      * Saves any files that are included in the UPDATE/WRITE body
+     * @TODO: First delete any files being replaced to avoid potential clutter
      * @param {object} args 
      */
     _saveFiles(args) {
