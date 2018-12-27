@@ -1,34 +1,64 @@
 const Sequelize = require('sequelize');
 const sequelize = require('../db-config');
 const DbModel = require('./db-model');
+const config = require('../../../config.json');
 
+/**
+ * @TODO: Handle "/sermons/{id}/SeriesName" to quickly get a list of sermons by its series
+ * @class Sermon
+ * @extends {DbModel}
+ */
 class Sermon extends DbModel {
 
     constructor() {
         // Define the table model
         const tableModel = sequelize.define('sermon', {
-            ID: { type: Sequelize.INTEGER, primaryKey: true },
+            id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true, field: 'ID' },
             SeriesID: Sequelize.INTEGER,
             Title: Sequelize.STRING(100),
             Speaker: Sequelize.STRING(100),
             Type: Sequelize.INTEGER,
+            FileName: Sequelize.STRING(100),
             MediaPath: Sequelize.STRING(255),
             ThumbnailPath: Sequelize.STRING(255),
             Date: Sequelize.TIME
         }, { tableName: 'Sermon' });
 
         const viewModel = sequelize.define('sermon-view', {
-            SermonID: { type: Sequelize.INTEGER, primaryKey: true },
+            id: { type: Sequelize.INTEGER, primaryKey: true, field: 'ID' },
+            SeriesID: Sequelize.INTEGER,
             SeriesName: Sequelize.STRING(100),
+            SeriesYear: Sequelize.CHAR(4),
             Year: Sequelize.INTEGER,
             Title: Sequelize.STRING(100),
             Speaker: Sequelize.STRING(100),
+            FileName: Sequelize.STRING(100),
+            ThumbnailPath: Sequelize.STRING(255),
             MediaPath: Sequelize.STRING(255),
+            MediaFullPath: Sequelize.STRING(255),
+            Type: Sequelize.INTEGER,
             MediaType: Sequelize.STRING,
-            Date: Sequelize.TIME
+            Date: Sequelize.TIME,
+            // Custom Columns
+            MediaUrl: Sequelize.VIRTUAL,
+            SeriesNameYear: Sequelize.VIRTUAL,
+            ThumbnailFullPath: Sequelize.VIRTUAL
         }, { tableName: 'vwSermon' });
 
         super(tableModel, viewModel);
+    }
+
+    /**
+     * @param {Object|array} result
+     * @override 
+     */
+    processRows(result) {
+        for (const i in result) {
+            result[i].MediaUrl = result[i].MediaFullPath ? config.s3.prefix + result[i].MediaFullPath : null;
+            result[i].SeriesNameYear = result[i].SeriesName + ` (${result[i].SeriesYear})`;
+            result[i].ThumbnailFullPath = result[i].ThumbnailPath ? config.s3.prefix + result[i].ThumbnailPath : null;
+        }
+        return Promise.resolve(result);
     }
     
     /**
@@ -98,7 +128,8 @@ class Sermon extends DbModel {
                     return 'Series ID does not exist.';
                 }
             }
-            else if (field === 'MediaType') {
+            // Media Type
+            else if (field === 'Type') {
                 isValid = false;
                 for (let row of data.mediaTypes) {
                     row = row[0];

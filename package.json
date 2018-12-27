@@ -1,6 +1,6 @@
 {
   "name": "ifgf-seattle-node-api",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -10,13 +10,16 @@
   "author": "IFGF Dev Team",
   "license": "ISC",
   "dependencies": {
+    "aws-sdk": "^2.291.0",
     "body-parser": "^1.18.3",
     "dotenv": "^5.0.1",
     "express": "^4.16.3",
     "moment": "^2.22.2",
+    "morgan": "^1.9.0",
     "mysql2": "^1.5.3",
     "passport": "^0.4.0",
     "passport-http": "^0.3.0",
+    "request": "^2.88.0",
     "sequelize": "^4.37.6"
   }
 }

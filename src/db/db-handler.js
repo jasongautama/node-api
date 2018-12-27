@@ -5,12 +5,14 @@ const CareGroup = require('./models/care-group');
 const Sermon = require('./models/sermon');
 const SermonSeries = require('./models/sermon-series');
 const Post = require('./models/post');
+const SiteSetting = require('./models/site-settings');
 
 const Models = {
     'CareGroups': 'care-groups',
     'Sermons': 'sermons',
     'SermonSeries': 'sermon-series',
-    'Posts': 'posts'
+    'Posts': 'posts',
+    'SiteSettings': 'site-settings'
 };
 
 const ErrorCodes = {
@@ -57,12 +59,13 @@ class DbHandler {
          * @type {string|null}
          */
         this.entityKey = urlParts.submodule;
-    }
+       }
 
     /**
      * Routes DB requests to its appropriate function based on the path and method we received
+     * @param {IncomingResponse} expressResponse - The Express Response object
      */
-    routeRequest() {
+    routeRequest(expressResponse) {
         return new Promise((resolve, reject) => {
             let model = null;
     
@@ -83,6 +86,10 @@ class DbHandler {
                 case Models.Posts:
                     model = new Post();
                     break;
+                
+                case Models.SiteSettings:
+                    model = new SiteSetting();
+                    break;
                     
                 default:
                     return reject({
@@ -94,6 +101,14 @@ class DbHandler {
             // Once we have the model, execute any requested operations
             return this.execute(model)
                 .then(res => {
+                    if (this.method === 'GET') {
+                        const ct = Array.isArray(res) ? res.length : 1;
+                        expressResponse.set({
+                            'X-Total-Count': ct,
+                            'Content-Range': `${this.module} 1-${ct}/${ct}`,
+                            'Content-Type': 'application/json'
+                        });
+                    }
                     resolve(res);
                 })
                 .catch(err => {
@@ -113,10 +128,11 @@ class DbHandler {
     execute(model) {
         // Handle GET requests
         if (this.method === 'GET') {
-            return model.get();
+            return model.get(this.entityKey);
         }
         // Handle PUT/Update requests
         else if (this.method === 'PUT') {
+            console.log(`PUT request with key: ${this.entityKey}`); // and body:`, this.body);
             return model.update(this.entityKey, this.body);
         }
         // Handle POST/Create requests

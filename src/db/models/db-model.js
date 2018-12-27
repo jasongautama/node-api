@@ -1,8 +1,10 @@
 const Sequelize = require('sequelize');
 const sequelize = require('../db-config');
+const S3Handler = require('../../aws.s3');
 
 /**
  * Base class for our Database Models
+ * @TODO: Handle pagination
  * @abstract
  */
 class DbModel {
@@ -26,25 +28,35 @@ class DbModel {
 
     /**
      * Retrives data with the filters passed in
-     * @param {Object} filter - object to define WHERE conditions
+     * @param {string|int} entityKey - The ID of the model
+     * @oaram {{}} filters - Object containing various parameter filters
      */
-    get(filter) {
+    get(entityKey, filters = {}) {
         return new Promise((resolve, reject) => {
             sequelize.authenticate()
                 .then(() => {
+                    // Default to regular model
+                    let model = this.model;
                     if (this.viewModel !== null) {
-                        return this.viewModel.findAll(filter);
+                        model = this.viewModel;
                     }
-                    return this.model.findAll(filter);
+                    // Check if entity 'ID' is specified for query.
+                    if (entityKey) {
+                        filters.id = entityKey;
+                    }
+                    return model.findAll({
+                        where: filters
+                    });
+                })
+                .then(result => {
+                    return this.processRows(result);
                 })
                 .then(rows => {
-                    return this.processRows(rows);
-                })
-                .then(rows => {
-                    return resolve(rows);
+                    const result = entityKey ? rows[0] : rows;
+                    return resolve(result);
                 })
                 .catch(err => {
-                    reject('Unable to retrieve model data: ' + err);
+                    return reject('Unable to retrieve model data: ' + err);
                 });
         });
     }
@@ -57,13 +69,16 @@ class DbModel {
         return new Promise((resolve, reject) => {
             this.validateArgs(args)
                 .then(() => {
-                    return this.model.create(args);
+                    return this._saveFiles(args);
+                })
+                .then((newArgs) => {
+                    return this.model.create(newArgs);
                 })
                 .then(res => {
                     return resolve(res);
                 })
                 .catch(err => {
-                    reject('Unable to create model: ', err);
+                    return reject('Unable to create model: ', err);
                 });
         });
     }
@@ -97,16 +112,64 @@ class DbModel {
                             message: validateErr
                         });
                     }
-                    return entity.update(args);
+                    return this._saveFiles(args);
+                })
+                .then((newArgs) => {
+                    return entity.update(newArgs);
                 })
                 .then(res => {
-                    console.log('Model updated to: ', this.model);
+                    console.log('Model update successful.');
                     return resolve(res);
                 })
                 .catch(err => {
                     console.log('DbModel > Update error: ', err);
                     reject('Unable to update model data: ', err);
                 });
+        });
+    }
+
+    /**
+     * Saves any files that are included in the UPDATE/WRITE body
+     * @TODO: First delete any files being replaced to avoid potential clutter
+     * @param {object} args 
+     */
+    _saveFiles(args) {
+        return new Promise((resolve, reject) => {
+            const s3 = new S3Handler();
+
+            let chain = Promise.resolve();
+
+            let i = 1;
+            for (const field in args) {
+                // If last 4 characters is "File"
+                if (field.substr(field.length - 4).includes('File')) {
+                    const fileData = args[field];
+                    chain = chain.then(_ => new Promise(res => {
+                        console.log(`Uploading file #${i}...`, fileData[0].title);
+                        i++;
+                        return s3.saveModelFile(this.constructor.name, field, fileData, 'public-read')
+                            .then(s3Key => {
+                                console.log(`${field} saved at ${s3Key}`);
+                                // Add path to the Path field and remove the File field
+                                args[field.replace('File', 'Path')] = s3Key;
+                                delete args[field];
+                                res();
+                            })
+                            .catch(err => {
+                                return reject(`File saving failed! ${err}`);
+                            })
+                        }
+                    ));
+                }
+            }
+            // Execute the chain and resolve
+            chain.then(() => {
+                return resolve(args);
+            })
+            .catch(err => {
+                console.log('DbModel > _saveFiles error: ', err);
+                return reject(err);
+            })
         });
     }
 
